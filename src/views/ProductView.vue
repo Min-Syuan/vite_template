@@ -58,6 +58,7 @@ export default {
       <!-- 請把以下資料排版 -->
       {{ displayData }}
     </div>
+    <Button type="info">View UI</Button>
 
   </div>
 </template>
