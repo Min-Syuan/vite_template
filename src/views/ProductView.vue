@@ -10,36 +10,48 @@ export default {
       displayData: []
     }
   },
-  created() {
-    // this.fetchData()
-    this.axiosGetData()
-  },
-  methods: {
-    fetchData() {
-      //使用fetch
-      fetch('https://fakestoreapi.com/products')
-        .then(res => res.json())
-        .then(json => {
-          this.responseData = json
-        })
-    },
-    axiosGetData() {
-      //使用axios
-      axios.get('https://fakestoreapi.com/products')
-        .then(res => {
-          if (res && res.data) {
-            this.responseData = res.data
-            this.displayData = res.data
-          }
-        })
-    },
-    filterHandle() {
-      this.displayData = this.responseData.filter((item)=>{
-        // console.log(item);
-        return item.title.includes(this.search)
-      })
+  computed: {
+    productCount() {
+      return Array.isArray(this.displayData)? this.displayData.length: 0
     }
-  }
+  },
+    nodata() {
+      return this.displayData.length === 0
+    },
+    loading() {
+      return this.responseData.length === 0
+
+    },
+    created() {
+      // this.fetchData()
+      this.axiosGetData()
+    },
+    methods: {
+      fetchData() {
+        //使用fetch
+        fetch('https://fakestoreapi.com/products')
+          .then(res => res.json())
+          .then(json => {
+            this.responseData = json
+          })
+      },
+      axiosGetData() {
+        //使用axios
+        axios.get('https://fakestoreapi.com/products')
+          .then(res => {
+            if (res && res.data) {
+              this.responseData = res.data
+              this.displayData = res.data
+            }
+          })
+      },
+      filterHandle() {
+        this.displayData = this.responseData.filter((item)=>{
+          // console.log(item);
+          return item.title.includes(this.search)
+        })
+      }
+    },
 }
 
 </script>
@@ -51,11 +63,15 @@ export default {
     <div>
       <input type="text" v-model.trim="search" @input="filterHandle">
       <!-- {{ search }} -->
-      {{ displayData.length }}
+      <b>{{ productCount }}</b>
     </div>
 
     <div class="product_container">
       <!-- 請把以下資料排版 -->
+      <div v-if="loading">載入中</div>
+      <div v-else-if="nodata">沒有資料</div>
+      <div v-else>{{ displayData }}</div>
+
       {{ displayData }}
     </div>
     <Button type="info">View UI</Button>
